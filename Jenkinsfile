@@ -5,6 +5,7 @@ pipeline {
             steps {
                 sh 'mvn --version'
                 sh 'mvn -U clean package'
+                sh './docker-build.sh'
             }
         }
     }
