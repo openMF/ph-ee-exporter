@@ -1,0 +1,28 @@
+{
+  "partitionId": 1,
+  "value": {
+    "type": "payer-request-confirm",
+    "errorMessage": "",
+    "deadline": 1585044108258,
+    "errorCode": "",
+    "bpmnProcessId": "PaymentTest3",
+    "workflowKey": 2251799813939136,
+    "customHeaders": {},
+    "worker": "default",
+    "retries": 3,
+    "elementId": "Task_11ralt4",
+    "elementInstanceKey": 2251799814338346,
+    "workflowDefinitionVersion": 3,
+    "variables": {},
+    "workflowInstanceKey": 2251799814338288
+  },
+  "sourceRecordPosition": 167504041888,
+  "position": 167504042384,
+  "recordType": "EVENT",
+  "valueType": "JOB",
+  "timestamp": 1585043808313,
+  "intent": "COMPLETED",
+  "rejectionType": "NULL_VAL",
+  "rejectionReason": "",
+  "key": 2251799814338347
+}
