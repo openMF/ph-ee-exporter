@@ -31,18 +31,19 @@ public class KafkaExporter implements Exporter {
     public void configure(final Context context) {
         logger = context.getLogger();
         configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
-        logger.debug("Kafka Exporter configured with {}", configuration);
+        logger.debug("DPC Kafka exporter configured with {}", configuration);
 
-        context.setFilter(new KafkaRecordFilter(configuration));
+//        context.setFilter(new KafkaRecordFilter(configuration));
     }
 
     @Override
     public void open(final Controller controller) {
+        logger.info("DPC Kafka exporter opening");
         this.controller = controller;
         client = createClient();
 
         scheduleDelayedFlush();
-        logger.info("Kafka Exporter opened");
+        logger.info("DPC Kafka exporter opened");
     }
 
     @Override
@@ -59,7 +60,7 @@ public class KafkaExporter implements Exporter {
             logger.warn("Failed to close elasticsearch client", e);
         }
 
-        logger.info("Kafka Exporter closed");
+        logger.info("DPC Kafka exporter closed");
     }
 
     @Override
@@ -97,21 +98,21 @@ public class KafkaExporter implements Exporter {
         }
     }
 
-    public static class KafkaRecordFilter implements Context.RecordFilter {
-        private final KafkaExporterConfiguration configuration;
-
-        KafkaRecordFilter(final KafkaExporterConfiguration configuration) {
-            this.configuration = configuration;
-        }
-
-        @Override
-        public boolean acceptType(final RecordType recordType) {
-            return configuration.shouldIndexRecordType(recordType);
-        }
-
-        @Override
-        public boolean acceptValue(final ValueType valueType) {
-            return configuration.shouldIndexValueType(valueType);
-        }
-    }
+//    public static class KafkaRecordFilter implements Context.RecordFilter {
+//        private final KafkaExporterConfiguration configuration;
+//
+//        KafkaRecordFilter(final KafkaExporterConfiguration configuration) {
+//            this.configuration = configuration;
+//        }
+//
+//        @Override
+//        public boolean acceptType(final RecordType recordType) {
+//            return configuration.shouldIndexRecordType(recordType);
+//        }
+//
+//        @Override
+//        public boolean acceptValue(final ValueType valueType) {
+//            return configuration.shouldIndexValueType(valueType);
+//        }
+//    }
 }
