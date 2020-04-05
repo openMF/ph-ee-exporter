@@ -35,19 +35,6 @@ public class KafkaExporterClient {
         this.configuration = configuration;
         this.logger = logger;
         Map<String, Object> kafkaProperties = new HashMap<>();
-        //                    of("brokers", bootstrapServers),
-        //                    of("sslKeystoreLocation", sslKeystoreLocation),
-        //                    of("sslKeystorePassword", sslKeystorePassword),
-        //                    of("sslTruststoreLocation", sslTruststoreLocation),
-        //                    of("sslTruststorePassword", sslTruststorePassword),
-        //                    of("securityProtocol", securityProtocol),
-        //                    of("sslKeyPassword", sslKeyPassword),
-        //                    of("saslJaasConfig", "RAW(" + decodedSaslJaasConfig + ")"),
-        //                    of("saslMechanism", saslMechanism),
-        //                    of("serializerClass", KafkaAvroSerializer.class.getName()),
-        //                    of("valueDeserializer", KafkaAvroDeserializer.class.getName()),
-        //                    of("specificAvroReader", "true"),
-        //                    of("schemaRegistryURL", schemaRegistryURL)
 
         String clientId = buildKafkaClientId(logger);
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
