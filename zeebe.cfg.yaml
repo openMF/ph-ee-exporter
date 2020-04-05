@@ -254,7 +254,7 @@ zeebe:
     exporters:
       kafkastreamer:
         className: hu.dpc.rt.kafkastreamer.exporter.KafkaExporter
-        jarPath: /usr/local/zeebe/exporters/exporter-1.0.0-SNAPSHOT.jar
+        jarPath: /usr/local/zeebe/lib/exporter-1.0.0-SNAPSHOT.jar
         args:
           url: http://kafka:9092/
 

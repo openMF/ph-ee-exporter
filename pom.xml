@@ -17,7 +17,7 @@
         <maven-shade-plugin.version>3.2.2</maven-shade-plugin.version>
 
         <zeebe.version>0.23.0-alpha2</zeebe.version>
-        <kafka-streams.version>2.4.0</kafka-streams.version>
+        <kafka.version>2.4.0</kafka.version>
         <elasticsearch.version>7.6.0</elasticsearch.version>
         <json.version>20190722</json.version>
     </properties>
@@ -25,23 +25,27 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.kafka</groupId>
-            <artifactId>kafka-streams</artifactId>
-            <version>${kafka-streams.version}</version>
+            <artifactId>kafka-clients</artifactId>
+            <version>${kafka.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.zeebe</groupId>
             <artifactId>zeebe-exporter-api</artifactId>
             <version>${zeebe.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>io.zeebe</groupId>
             <artifactId>zeebe-elasticsearch-exporter</artifactId>
             <version>${zeebe.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
             <version>${json.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
