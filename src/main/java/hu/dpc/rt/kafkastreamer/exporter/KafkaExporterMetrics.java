@@ -16,7 +16,7 @@ public class KafkaExporterMetrics {
 
     private static final Histogram FLUSH_DURATION =
             Histogram.build()
-                    .namespace("kafka_exporter-" + KafkaExporterClient.buildKafkaClientId(logger))
+                    .namespace("kafka_exporter_" + KafkaExporterClient.buildKafkaClientId(logger).replaceAll("-", "_"))
                     .name("flush_duration_seconds")
                     .help("Flush duration of bulk exporters in seconds")
                     .labelNames("partition")
@@ -24,7 +24,7 @@ public class KafkaExporterMetrics {
 
     private static final Histogram BULK_SIZE =
             Histogram.build()
-                    .namespace("kafka_exporter-" + KafkaExporterClient.buildKafkaClientId(logger))
+                    .namespace("kafka_exporter_" + KafkaExporterClient.buildKafkaClientId(logger).replaceAll("-", "_"))
                     .name("bulk_size")
                     .help("Exporter bulk size")
                     .buckets(10, 100, 1_000, 10_000, 100_000)
