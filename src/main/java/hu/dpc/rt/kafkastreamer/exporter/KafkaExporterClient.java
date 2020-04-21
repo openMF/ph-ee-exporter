@@ -8,6 +8,8 @@
 package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.zeebe.protocol.record.Record;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -16,6 +18,7 @@ import org.slf4j.Logger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -42,6 +45,15 @@ public class KafkaExporterClient {
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         this.producer = new KafkaProducer<>(kafkaProperties);
+
+        try {
+            AdminClient adminClient = AdminClient.create(kafkaProperties);
+            adminClient.createTopics(Arrays.asList(new NewTopic(kafkaTopic, 1, (short) 1)));
+            adminClient.close();
+            logger.info("created kafka topic {} successfully", kafkaTopic);
+        } catch (Exception e) {
+            logger.warn("Failed to create Kafka topic (it exists already?)", e);
+        }
 
         logger.info("configured Kafka producer with client id {}", clientId);
     }
