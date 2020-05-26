@@ -29,11 +29,15 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void configure(final Context context) {
-        logger = context.getLogger();
-        configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
-        logger.debug("DPC Kafka exporter configured with {}", configuration);
+        try {
+            logger = context.getLogger();
+            configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
+            logger.debug("DPC Kafka exporter configured with {}", configuration);
 
 //        context.setFilter(new KafkaRecordFilter(configuration));
+        } catch (Exception e) {
+            logger.error("Failed to configure KafkaExporter", e);
+        }
     }
 
     @Override

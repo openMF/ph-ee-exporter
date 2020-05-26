@@ -12,8 +12,8 @@ import io.zeebe.protocol.record.RecordType;
 import io.zeebe.protocol.record.ValueType;
 
 public class KafkaExporterConfiguration {
-  // elasticsearch http url
-  public String url = "http://localhost:9200";
+  // elasticsearch http url - not used
+  public String url = "not used";
 
   public final IndexConfiguration index = new IndexConfiguration();
   public final BulkConfiguration bulk = new BulkConfiguration();
@@ -21,7 +21,7 @@ public class KafkaExporterConfiguration {
 
   @Override
   public String toString() {
-    return "ElasticsearchExporterConfiguration{"
+    return "KafkaExporterConfiguration{"
         + "url='"
         + url
         + '\''
