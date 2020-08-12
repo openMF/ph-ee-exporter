@@ -16,8 +16,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,14 +57,7 @@ public class KafkaExporterClient {
     }
 
     public static String buildKafkaClientId(Logger logger) {
-        String clientId;
-        try {
-            clientId = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            logger.error("failed to resolve local hostname, picking random clientId");
-            clientId = UUID.randomUUID().toString();
-        }
-        return clientId;
+        return UUID.randomUUID().toString();
     }
 
     public void close() {
