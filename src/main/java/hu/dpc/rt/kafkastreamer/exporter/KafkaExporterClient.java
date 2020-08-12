@@ -27,6 +27,7 @@ public class KafkaExporterClient {
     private final KafkaExporterConfiguration configuration;
     private KafkaExporterMetrics metrics;
     private AtomicLong sentToKafka = new AtomicLong(0);
+    private boolean initialized;
 
     // json content for now
     private KafkaProducer<String, String> producer;
@@ -65,8 +66,13 @@ public class KafkaExporterClient {
     }
 
     public void index(final Record<?> record) {
-        if (metrics == null) {
-            metrics = new KafkaExporterMetrics(record.getPartitionId());
+        if (metrics == null && !initialized) {
+            try {
+                metrics = new KafkaExporterMetrics(record.getPartitionId());
+            } catch (Exception e) {
+                logger.warn("## failed to initialize metrics, continuing without it");
+            }
+            initialized = true;
         }
 
         if (configuration.shouldIndexRecord(record)) {
