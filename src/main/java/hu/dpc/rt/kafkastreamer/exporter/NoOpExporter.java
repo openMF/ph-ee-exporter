@@ -1,9 +1,9 @@
 package hu.dpc.rt.kafkastreamer.exporter;
 
-import io.zeebe.exporter.api.Exporter;
-import io.zeebe.exporter.api.context.Context;
-import io.zeebe.exporter.api.context.Controller;
-import io.zeebe.protocol.record.Record;
+import io.camunda.zeebe.exporter.api.Exporter;
+import io.camunda.zeebe.exporter.api.context.Context;
+import io.camunda.zeebe.exporter.api.context.Controller;
+import io.camunda.zeebe.protocol.record.Record;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,11 +16,6 @@ public class NoOpExporter implements Exporter {
     }
 
     @Override
-    public void export(Record record) {
-        // empty
-    }
-
-    @Override
     public void open(Controller controller) {
         logger.info("## no-op exporter opened");
     }
@@ -28,5 +23,10 @@ public class NoOpExporter implements Exporter {
     @Override
     public void close() {
         logger.info("## no-op exporter closed");
+    }
+
+    @Override
+    public void export(Record<?> record) {
+        // empty
     }
 }

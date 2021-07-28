@@ -7,7 +7,7 @@
  */
 package hu.dpc.rt.kafkastreamer.exporter;
 
-import io.zeebe.protocol.record.Record;
+import io.camunda.zeebe.protocol.record.Record;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;

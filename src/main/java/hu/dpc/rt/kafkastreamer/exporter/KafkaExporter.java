@@ -7,12 +7,12 @@
  */
 package hu.dpc.rt.kafkastreamer.exporter;
 
-import io.zeebe.exporter.api.Exporter;
-import io.zeebe.exporter.api.context.Context;
-import io.zeebe.exporter.api.context.Controller;
-import io.zeebe.protocol.record.Record;
-import io.zeebe.protocol.record.RecordType;
-import io.zeebe.protocol.record.ValueType;
+import io.camunda.zeebe.exporter.api.Exporter;
+import io.camunda.zeebe.exporter.api.context.Context;
+import io.camunda.zeebe.exporter.api.context.Controller;
+import io.camunda.zeebe.protocol.record.Record;
+import io.camunda.zeebe.protocol.record.RecordType;
+import io.camunda.zeebe.protocol.record.ValueType;
 import org.slf4j.Logger;
 
 import java.time.Duration;
@@ -68,7 +68,7 @@ public class KafkaExporter implements Exporter {
     }
 
     @Override
-    public void export(final Record record) {
+    public void export(Record<?> record) {
         client.index(record);
         lastPosition = record.getPosition();
 
@@ -91,7 +91,7 @@ public class KafkaExporter implements Exporter {
     }
 
     private void scheduleDelayedFlush() {
-        controller.scheduleTask(Duration.ofSeconds(configuration.bulk.delay), this::flushAndReschedule);
+        controller.scheduleCancellableTask(Duration.ofSeconds(configuration.bulk.delay), this::flushAndReschedule);
     }
 
     private void flush() {
