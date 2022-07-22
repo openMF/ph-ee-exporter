@@ -1,1 +1,25 @@
+zeebe:
+  broker:
+    exporters:
+      elasticsearch:
+        args:
+          index:
+            prefix: zeebe-record
+            createTemplate: true
+            command: false
+            event: true
+            rejection: false
+            deployment: true
+            error: true
+            incident: true
+            job: true
+            jobBatch: false
+            message: false
+            messageSubscription: false
+            variable: true
+            variableDocument: true
+            workflowInstance: true
+            workflowInstanceCreation: false
+            workflowInstanceSubscription: false
+            ignoreVariablesAbove: 32677
 
