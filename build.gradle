@@ -23,8 +23,8 @@ dependencies {
     compileOnly 'org.json:json:20190722'
 }
 
-group = 'hu.dpc.phee'
-version = '1.0.0-SNAPSHOT'
+group = 'org.mifos.phee'
+version = '1.1.0-SNAPSHOT'
 description = 'exporter'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
