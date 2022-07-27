@@ -59,6 +59,8 @@ public class KafkaExporterConfiguration {
         return index.variable;
       case VARIABLE_DOCUMENT:
         return index.variableDocument;
+      case PROCESS_INSTANCE:
+        return index.processInstance;
         default:
         return false;
     }
@@ -102,6 +104,7 @@ public class KafkaExporterConfiguration {
     public boolean workflowInstance = true;
     public boolean workflowInstanceCreation = false;
     public boolean workflowInstanceSubscription = false;
+    public boolean processInstance = true;
 
     @Override
     public String toString() {
@@ -139,6 +142,8 @@ public class KafkaExporterConfiguration {
           + workflowInstanceCreation
           + ", workflowInstanceSubscription="
           + workflowInstanceSubscription
+          + ", process_instance="
+          + processInstance
           + '}';
     }
   }
