@@ -11,11 +11,11 @@ import io.camunda.zeebe.exporter.api.Exporter;
 import io.camunda.zeebe.exporter.api.context.Context;
 import io.camunda.zeebe.exporter.api.context.Controller;
 import io.camunda.zeebe.protocol.record.Record;
-import io.camunda.zeebe.protocol.record.RecordType;
-import io.camunda.zeebe.protocol.record.ValueType;
+
 import org.slf4j.Logger;
 
 import java.time.Duration;
+import java.util.Map;
 
 public class KafkaExporter implements Exporter {
     private Logger logger;
@@ -31,8 +31,16 @@ public class KafkaExporter implements Exporter {
     public void configure(final Context context) {
         try {
             logger = context.getLogger();
+            //logger.info("This is context: " + context.toString());
             configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
-            logger.debug("DPC Kafka exporter configured with {}", configuration);
+            /*Map<String, Object> configs = context.getConfiguration().getArguments();
+            for (String key: configs.keySet()) {
+                logger.info("Config arg: " + key + ":" + configs.get(key));
+            }*/
+            logger.info("Calling configure");
+            logger.info("With context configuration :" + context.getConfiguration());
+            logger.info("With context configuration :" + context.getConfiguration().getArguments());
+            logger.info("DPC Kafka exporter configured with {}", configuration);
 
 //        context.setFilter(new KafkaRecordFilter(configuration));
         } catch (Exception e) {
@@ -52,6 +60,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void close() {
+        logger.info("Calling close function");
         try {
             flush();
         } catch (final Exception e) {
@@ -84,6 +93,7 @@ public class KafkaExporter implements Exporter {
     }
 
     private void flushAndReschedule() {
+        logger.info("Calling flushAndReschedule function");
         try {
             flush();
         } catch (final Exception e) {
@@ -97,6 +107,7 @@ public class KafkaExporter implements Exporter {
     }
 
     private void flush() {
+        logger.info("Calling flush function");
         if (client.flush()) {
             controller.updateLastExportedRecordPosition(lastPosition);
         } else {
