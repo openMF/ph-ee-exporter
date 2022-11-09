@@ -1,21 +1,12 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.0. You may not use this file
- * except in compliance with the Zeebe Community License 1.0.
- */
 package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.camunda.zeebe.exporter.api.Exporter;
 import io.camunda.zeebe.exporter.api.context.Context;
 import io.camunda.zeebe.exporter.api.context.Controller;
 import io.camunda.zeebe.protocol.record.Record;
-
 import org.slf4j.Logger;
 
 import java.time.Duration;
-import java.util.Map;
 
 public class KafkaExporter implements Exporter {
     private Logger logger;
@@ -30,19 +21,10 @@ public class KafkaExporter implements Exporter {
     @Override
     public void configure(final Context context) {
         try {
-            logger = context.getLogger();
-            //logger.info("This is context: " + context.toString());
+            this.logger = context.getLogger();
             configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
-            /*Map<String, Object> configs = context.getConfiguration().getArguments();
-            for (String key: configs.keySet()) {
-                logger.info("Config arg: " + key + ":" + configs.get(key));
-            }*/
-            logger.info("Calling configure");
-            logger.info("With context configuration :" + context.getConfiguration());
-            logger.info("With context configuration :" + context.getConfiguration().getArguments());
             logger.info("DPC Kafka exporter configured with {}", configuration);
 
-//        context.setFilter(new KafkaRecordFilter(configuration));
         } catch (Exception e) {
             logger.error("Failed to configure KafkaExporter", e);
         }
@@ -52,7 +34,7 @@ public class KafkaExporter implements Exporter {
     public void open(final Controller controller) {
         logger.info("DPC Kafka exporter opening");
         this.controller = controller;
-        client = createClient();
+        client = new KafkaExporterClient(configuration, logger);
 
         scheduleDelayedFlush();
         logger.info("DPC Kafka exporter opened");
@@ -60,7 +42,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void close() {
-        logger.info("Calling close function");
+        logger.info("DPC Kafka exporter closing");
         try {
             flush();
         } catch (final Exception e) {
@@ -88,12 +70,7 @@ public class KafkaExporter implements Exporter {
         logger.trace("Finish exporting record " + record);
     }
 
-    protected KafkaExporterClient createClient() {
-        return new KafkaExporterClient(configuration, logger);
-    }
-
     private void flushAndReschedule() {
-        logger.info("Calling flushAndReschedule function");
         try {
             flush();
         } catch (final Exception e) {
@@ -114,22 +91,4 @@ public class KafkaExporter implements Exporter {
             logger.warn("Failed to flush bulk completely");
         }
     }
-
-//    public static class KafkaRecordFilter implements Context.RecordFilter {
-//        private final KafkaExporterConfiguration configuration;
-//
-//        KafkaRecordFilter(final KafkaExporterConfiguration configuration) {
-//            this.configuration = configuration;
-//        }
-//
-//        @Override
-//        public boolean acceptType(final RecordType recordType) {
-//            return configuration.shouldIndexRecordType(recordType);
-//        }
-//
-//        @Override
-//        public boolean acceptValue(final ValueType valueType) {
-//            return configuration.shouldIndexValueType(valueType);
-//        }
-//    }
 }

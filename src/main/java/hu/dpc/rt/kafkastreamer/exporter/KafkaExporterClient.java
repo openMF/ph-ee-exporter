@@ -1,10 +1,3 @@
-/*
- * Copyright Camunda Services GmbH and/or licensed to Camunda Services GmbH under
- * one or more contributor license agreements. See the NOTICE file distributed
- * with this work for additional information regarding copyright ownership.
- * Licensed under the Zeebe Community License 1.0. You may not use this file
- * except in compliance with the Zeebe Community License 1.0.
- */
 package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.camunda.zeebe.protocol.record.Record;
@@ -23,23 +16,20 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaExporterClient {
-    private final Logger logger;
-    private final KafkaExporterConfiguration configuration;
+    private Logger logger;
     private KafkaExporterMetrics metrics;
     private AtomicLong sentToKafka = new AtomicLong(0);
     private boolean initialized;
 
-    // json content for now
     private KafkaProducer<String, String> producer;
-    public static final String kafkaTopic = "zeebe-export";
+    private KafkaExporterConfiguration configuration = new KafkaExporterConfiguration();
 
-    public KafkaExporterClient(final KafkaExporterConfiguration configuration, final Logger logger) {
-        this.configuration = configuration;
+    public KafkaExporterClient(KafkaExporterConfiguration configuration, Logger logger) {
         this.logger = logger;
         Map<String, Object> kafkaProperties = new HashMap<>();
 
         String clientId = buildKafkaClientId(logger);
-        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
+        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.kafkaUrl);
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -47,9 +37,9 @@ public class KafkaExporterClient {
 
         try {
             AdminClient adminClient = AdminClient.create(kafkaProperties);
-            adminClient.createTopics(Arrays.asList(new NewTopic(kafkaTopic, 1, (short) 1)));
+            adminClient.createTopics(Arrays.asList(new NewTopic(configuration.kafkaTopic, 1, (short) 1)));
             adminClient.close();
-            logger.info("created kafka topic {} successfully", kafkaTopic);
+            logger.info("created kafka topic {} successfully", configuration.kafkaTopic);
         } catch (Exception e) {
             logger.warn("Failed to create Kafka topic (it exists already?)", e);
         }
@@ -65,7 +55,7 @@ public class KafkaExporterClient {
         producer.close();
     }
 
-    public void index(final Record<?> record) {
+    public void index(Record<?> record) {
         if (metrics == null && !initialized) {
             try {
                 metrics = new KafkaExporterMetrics(record.getPartitionId());
@@ -79,7 +69,7 @@ public class KafkaExporterClient {
             logger.trace("sending record to kafka: {}", record.toJson());
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
-            producer.send(new ProducerRecord<>(kafkaTopic, idFor(record), record.toJson()));
+            producer.send(new ProducerRecord<>(configuration.kafkaTopic, idFor(record), record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
@@ -101,7 +91,7 @@ public class KafkaExporterClient {
         return sentToKafka.get() >= configuration.bulk.size;
     }
 
-    protected String idFor(final Record<?> record) {
+    protected String idFor(Record<?> record) {
         return record.getPartitionId() + "-" + record.getPosition();
     }
 }
