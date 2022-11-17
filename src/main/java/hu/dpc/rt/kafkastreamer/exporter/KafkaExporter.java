@@ -84,7 +84,6 @@ public class KafkaExporter implements Exporter {
     }
 
     private void flush() {
-        logger.info("Calling flush function");
         if (client.flush()) {
             controller.updateLastExportedRecordPosition(lastPosition);
         } else {
