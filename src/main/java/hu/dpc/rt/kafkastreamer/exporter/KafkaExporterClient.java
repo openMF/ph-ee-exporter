@@ -69,7 +69,8 @@ public class KafkaExporterClient {
             logger.trace("sending record to kafka: {}", record.toJson());
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
-            producer.send(new ProducerRecord<>(configuration.kafkaTopic, idFor(record), record.toJson()));
+            String key = Long.toString(record.getKey());
+            producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
@@ -90,8 +91,5 @@ public class KafkaExporterClient {
     public boolean shouldFlush() {
         return sentToKafka.get() >= configuration.bulk.size;
     }
-
-    protected String idFor(Record<?> record) {
-        return record.getPartitionId() + "-" + record.getPosition();
-    }
+    
 }
