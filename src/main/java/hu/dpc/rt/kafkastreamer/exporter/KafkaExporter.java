@@ -79,6 +79,7 @@ public class KafkaExporter implements Exporter {
     @Override
     public void export(Record<?> record) {
         logger.trace("Exporting record " + record);
+        logger.debug(record.toString());
         client.index(record);
         lastPosition = record.getPosition();
 
