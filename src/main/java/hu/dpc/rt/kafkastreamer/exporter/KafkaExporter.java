@@ -53,7 +53,9 @@ public class KafkaExporter implements Exporter {
         logger.info("check if inside open method");
         logger.info("DPC Kafka exporter opening");
         this.controller = controller;
+        logger.info("creating client...");
         client = createClient();
+        logger.info("client created...");
 
         scheduleDelayedFlush();
         logger.info("DPC Kafka exporter opened");
