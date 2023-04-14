@@ -50,6 +50,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void open(final Controller controller) {
+        logger.info("check if inside open method");
         logger.info("DPC Kafka exporter opening");
         this.controller = controller;
         client = createClient();
@@ -78,7 +79,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void export(Record<?> record) {
-        logger.info("inside export method");
+        logger.info("checking if this kafka export method is used");
         logger.trace("Exporting record " + record);
         logger.debug(record.toString());
         client.index(record);
