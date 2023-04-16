@@ -38,6 +38,13 @@ public class KafkaExporterClient {
         this.logger = logger;
         Map<String, Object> kafkaProperties = new HashMap<>();
 
+        try {
+            Class.forName("org.apache.kafka.common.serialization.StringSerializer");
+            logger.info("String serializer found in classpath");
+        } catch (ClassNotFoundException e) {
+            logger.info("String serializer found in classpath");
+        }
+
         String clientId = buildKafkaClientId(logger);
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
