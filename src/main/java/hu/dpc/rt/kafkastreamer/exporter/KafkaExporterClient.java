@@ -51,6 +51,7 @@ public class KafkaExporterClient {
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         this.producer = new KafkaProducer<>(kafkaProperties);
+        logger.info("proceeding ahead with kafka");
 
         try {
             AdminClient adminClient = AdminClient.create(kafkaProperties);
