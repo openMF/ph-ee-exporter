@@ -40,7 +40,7 @@ public class KafkaExporterClient {
 
         try {
             Class.forName("org.apache.kafka.common.serialization.StringSerializer");
-            logger.info("String serializer found in classpath");
+            logger.info("String serializer found in classpath:" + StringSerializer.class.getName());
         } catch (ClassNotFoundException e) {
             logger.info("String serializer found in classpath");
         }
@@ -48,8 +48,10 @@ public class KafkaExporterClient {
         String clientId = buildKafkaClientId(logger);
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+//        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+//        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        kafkaProperties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        kafkaProperties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         this.producer = new KafkaProducer<>(kafkaProperties);
         logger.info("proceeding ahead with kafka");
 
