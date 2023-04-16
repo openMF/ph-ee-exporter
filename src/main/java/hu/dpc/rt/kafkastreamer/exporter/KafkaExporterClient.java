@@ -55,7 +55,14 @@ public class KafkaExporterClient {
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        producer = new KafkaProducer<>(properties);
+
+        try{
+            producer = new KafkaProducer<>(properties);
+        } catch (Exception e){
+            logger.warn("Issue creating kafka producer. Generating logs...");
+            e.printStackTrace();
+        }
+
         logger.info("proceeding ahead with kafka");
 
         try {
