@@ -16,10 +16,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaExporterClient {
@@ -52,7 +49,13 @@ public class KafkaExporterClient {
 //        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         kafkaProperties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        this.producer = new KafkaProducer<>(kafkaProperties);
+//        this.producer = new KafkaProducer<>(kafkaProperties);
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
+        properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        producer = new KafkaProducer<>(properties);
         logger.info("proceeding ahead with kafka");
 
         try {
