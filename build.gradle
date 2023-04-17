@@ -9,6 +9,12 @@ plugins {
     id 'maven-publish'
 }
 
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 repositories {
     mavenLocal()
     maven {
@@ -26,7 +32,7 @@ dependencies {
 group = 'org.mifos.phee'
 version = '1.1.1-SNAPSHOT'
 description = 'exporter'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications {
