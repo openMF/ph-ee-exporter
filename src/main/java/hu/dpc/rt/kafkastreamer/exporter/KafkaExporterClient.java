@@ -39,7 +39,7 @@ public class KafkaExporterClient {
             Class.forName("org.apache.kafka.clients.producer.KafkaProducer");
             logger.info("String serializer found in classpath:" + KafkaProducer.class.getName());
         } catch (ClassNotFoundException e) {
-            logger.info("String serializer found in classpath");
+            logger.info("String serializer not found in classpath");
         }
 
         String clientId = buildKafkaClientId(logger);
