@@ -36,8 +36,8 @@ public class KafkaExporterClient {
         Map<String, Object> kafkaProperties = new HashMap<>();
 
         try {
-            Class.forName("org.apache.kafka.common.serialization.StringSerializer");
-            logger.info("String serializer found in classpath:" + StringSerializer.class.getName());
+            Class.forName("org.apache.kafka.clients.producer.KafkaProducer");
+            logger.info("String serializer found in classpath:" + KafkaProducer.class.getName());
         } catch (ClassNotFoundException e) {
             logger.info("String serializer found in classpath");
         }
