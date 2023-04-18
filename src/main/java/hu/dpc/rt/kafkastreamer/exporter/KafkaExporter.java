@@ -13,13 +13,12 @@ import io.camunda.zeebe.exporter.api.context.Controller;
 import io.camunda.zeebe.protocol.record.Record;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Map;
 
 public class KafkaExporter implements Exporter {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger;
     private Controller controller;
 
     private KafkaExporterConfiguration configuration;
@@ -30,8 +29,9 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void configure(final Context context) {
+
         try {
-//            logger = context.getLogger();
+            logger = context.getLogger();
             //logger.info("This is context: " + context.toString());
             configuration = context.getConfiguration().instantiate(KafkaExporterConfiguration.class);
             /*Map<String, Object> configs = context.getConfiguration().getArguments();
