@@ -82,7 +82,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void export(Record<?> record) {
-        logger.info("checking if this kafka export method is used");
+        logger.info("Kafka record to be exported: " + record.toString());
         logger.trace("Exporting record " + record);
         logger.debug(record.toString());
         client.index(record);
