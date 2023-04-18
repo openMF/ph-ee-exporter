@@ -109,6 +109,7 @@ public class KafkaExporterClient {
      * @return true if all bulk records where flushed successfully
      */
     public boolean flush() {
+        logger.info("sent to kafka value: " + sentToKafka.get());
         if (sentToKafka.get() > 0) {
             producer.flush();
             logger.info("flushed {} exported records to Kafka", sentToKafka.get());

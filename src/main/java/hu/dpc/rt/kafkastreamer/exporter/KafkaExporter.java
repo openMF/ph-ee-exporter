@@ -115,6 +115,7 @@ public class KafkaExporter implements Exporter {
     private void flush() {
         logger.info("Calling flush function");
         if (client.flush()) {
+            logger.info("flushed something");
             controller.updateLastExportedRecordPosition(lastPosition);
         } else {
             logger.warn("Failed to flush bulk completely");
