@@ -119,6 +119,8 @@ public class KafkaExporterClient {
     }
 
     public boolean shouldFlush() {
+        logger.info("sent to kafka values: " + sentToKafka.get());
+        logger.info("config bulk size: " + configuration.bulk.size);
         return sentToKafka.get() >= configuration.bulk.size;
     }
 
