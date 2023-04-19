@@ -109,7 +109,6 @@ public class KafkaExporterClient {
      * @return true if all bulk records where flushed successfully
      */
     public boolean flush() {
-        logger.info("sent to kafka value: " + sentToKafka.get());
         if (sentToKafka.get() > 0) {
             producer.flush();
             logger.info("flushed {} exported records to Kafka", sentToKafka.get());
@@ -119,8 +118,7 @@ public class KafkaExporterClient {
     }
 
     public boolean shouldFlush() {
-        logger.info("sent to kafka values: " + sentToKafka.get());
-        logger.info("config bulk size: " + configuration.bulk.size);
+        logger.info("Method shouldFlush() executed by thread: " + Thread.currentThread().getName());
         logger.info("Is {} >= {}? Answer: {}", sentToKafka.get(), configuration.bulk.size, sentToKafka.get() >= configuration.bulk.size);
         return sentToKafka.get() >= configuration.bulk.size;
     }

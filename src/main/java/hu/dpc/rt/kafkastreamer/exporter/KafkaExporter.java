@@ -88,6 +88,7 @@ public class KafkaExporter implements Exporter {
         client.index(record);
         lastPosition = record.getPosition();
 
+        logger.info("Method export() executed by thread: " + Thread.currentThread().getName());
         if (client.shouldFlush()) {
             flush();
         }
@@ -114,6 +115,7 @@ public class KafkaExporter implements Exporter {
 
     private void flush() {
         logger.info("Calling flush function");
+        logger.info("Method flush() executed by thread: " + Thread.currentThread().getName());
         if (client.flush()) {
             logger.info("flushed something");
             controller.updateLastExportedRecordPosition(lastPosition);
