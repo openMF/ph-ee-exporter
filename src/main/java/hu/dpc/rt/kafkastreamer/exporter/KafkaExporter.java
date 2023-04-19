@@ -38,7 +38,6 @@ public class KafkaExporter implements Exporter {
             for (String key: configs.keySet()) {
                 logger.info("Config arg: " + key + ":" + configs.get(key));
             }*/
-            logger.info("Calling configure");
             logger.info("With context configuration :" + context.getConfiguration());
             logger.info("With context configuration :" + context.getConfiguration().getArguments());
             logger.info("DPC Kafka exporter configured with {}", configuration);
@@ -51,20 +50,14 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void open(final Controller controller) {
-        logger.info("check if inside open method");
-        logger.info("DPC Kafka exporter opening");
         this.controller = controller;
-        logger.info("creating client...");
         client = createClient();
-        logger.info("client created...");
-
         scheduleDelayedFlush();
         logger.info("DPC Kafka exporter opened");
     }
 
     @Override
     public void close() {
-        logger.info("Calling close function");
         try {
             flush();
         } catch (final Exception e) {
@@ -83,16 +76,11 @@ public class KafkaExporter implements Exporter {
     @Override
     public void export(Record<?> record) {
         logger.info("Kafka record to be exported: " + record.toString());
-        logger.trace("Exporting record " + record);
-        logger.debug(record.toString());
         client.index(record);
         lastPosition = record.getPosition();
-
-        logger.info("Method export() executed by thread: " + Thread.currentThread().getName());
         if (client.shouldFlush()) {
             flush();
         }
-        logger.trace("Finish exporting record " + record);
     }
 
     protected KafkaExporterClient createClient() {
@@ -115,9 +103,7 @@ public class KafkaExporter implements Exporter {
 
     private void flush() {
         logger.info("Calling flush function");
-        logger.info("Method flush() executed by thread: " + Thread.currentThread().getName());
         if (client.flush()) {
-            logger.info("flushed something");
             controller.updateLastExportedRecordPosition(lastPosition);
         } else {
             logger.warn("Failed to flush bulk completely");

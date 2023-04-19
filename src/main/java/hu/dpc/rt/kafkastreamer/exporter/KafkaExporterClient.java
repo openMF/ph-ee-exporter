@@ -33,37 +33,20 @@ public class KafkaExporterClient {
     public KafkaExporterClient(final KafkaExporterConfiguration configuration, final Logger logger) {
         this.configuration = configuration;
         this.logger = logger;
+
         Map<String, Object> kafkaProperties = new HashMap<>();
-
-        try {
-            Class.forName("org.apache.kafka.clients.producer.KafkaProducer");
-            logger.info("String serializer found in classpath:" + KafkaProducer.class.getName());
-        } catch (ClassNotFoundException e) {
-            logger.info("String serializer not found in classpath");
-        }
-
         String clientId = buildKafkaClientId(logger);
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-//        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-//        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        kafkaProperties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        kafkaProperties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-//        this.producer = new KafkaProducer<>(kafkaProperties);
-        Properties properties = new Properties();
-        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
-        properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
-        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 
         try{
-            producer = new KafkaProducer<>(properties);
+            producer = new KafkaProducer<>(kafkaProperties);
         } catch (Exception e){
             logger.warn("Issue creating kafka producer. Generating logs...");
             e.printStackTrace();
         }
-
-        logger.info("proceeding ahead with kafka");
 
         try {
             AdminClient adminClient = AdminClient.create(kafkaProperties);
@@ -118,8 +101,6 @@ public class KafkaExporterClient {
     }
 
     public boolean shouldFlush() {
-        logger.info("Method shouldFlush() executed by thread: " + Thread.currentThread().getName());
-        logger.info("Is {} >= {}? Answer: {}", sentToKafka.get(), configuration.bulk.size, sentToKafka.get() >= configuration.bulk.size);
         return sentToKafka.get() >= configuration.bulk.size;
     }
 
