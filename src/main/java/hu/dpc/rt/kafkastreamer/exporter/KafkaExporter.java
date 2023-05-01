@@ -29,7 +29,6 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void configure(final Context context) {
-
         try {
             logger = context.getLogger();
             //logger.info("This is context: " + context.toString());
@@ -38,6 +37,7 @@ public class KafkaExporter implements Exporter {
             for (String key: configs.keySet()) {
                 logger.info("Config arg: " + key + ":" + configs.get(key));
             }*/
+            logger.info("Calling configure");
             logger.info("With context configuration :" + context.getConfiguration());
             logger.info("With context configuration :" + context.getConfiguration().getArguments());
             logger.info("DPC Kafka exporter configured with {}", configuration);
@@ -50,6 +50,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void open(final Controller controller) {
+        logger.info("DPC Kafka exporter opening");
         this.controller = controller;
         client = createClient();
         scheduleDelayedFlush();
@@ -58,6 +59,7 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void close() {
+        logger.info("Calling close function");
         try {
             flush();
         } catch (final Exception e) {
@@ -75,12 +77,14 @@ public class KafkaExporter implements Exporter {
 
     @Override
     public void export(Record<?> record) {
-        logger.info("Kafka record to be exported: " + record.toString());
+        logger.trace("Exporting record " + record);
         client.index(record);
         lastPosition = record.getPosition();
+
         if (client.shouldFlush()) {
             flush();
         }
+        logger.trace("Finish exporting record " + record);
     }
 
     protected KafkaExporterClient createClient() {

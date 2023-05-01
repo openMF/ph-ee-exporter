@@ -40,13 +40,7 @@ public class KafkaExporterClient {
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-        try{
-            producer = new KafkaProducer<>(kafkaProperties);
-        } catch (Exception e){
-            logger.warn("Issue creating kafka producer. Generating logs...");
-            e.printStackTrace();
-        }
+        producer = new KafkaProducer<>(kafkaProperties);
 
         try {
             AdminClient adminClient = AdminClient.create(kafkaProperties);
