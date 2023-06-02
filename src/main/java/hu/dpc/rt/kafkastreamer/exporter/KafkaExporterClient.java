@@ -16,10 +16,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaExporterClient {
@@ -36,14 +33,14 @@ public class KafkaExporterClient {
     public KafkaExporterClient(final KafkaExporterConfiguration configuration, final Logger logger) {
         this.configuration = configuration;
         this.logger = logger;
-        Map<String, Object> kafkaProperties = new HashMap<>();
 
+        Map<String, Object> kafkaProperties = new HashMap<>();
         String clientId = buildKafkaClientId(logger);
         kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        this.producer = new KafkaProducer<>(kafkaProperties);
+        producer = new KafkaProducer<>(kafkaProperties);
 
         try {
             AdminClient adminClient = AdminClient.create(kafkaProperties);

@@ -9,6 +9,12 @@ plugins {
     id 'maven-publish'
 }
 
+jar {
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
 repositories {
     mavenLocal()
     maven {
@@ -17,16 +23,18 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.kafka:kafka-clients:2.4.0'
-    compileOnly 'io.camunda:zeebe-exporter-api:1.1.0'
-    compileOnly 'io.camunda:zeebe-elasticsearch-exporter:1.1.0'
+    implementation ('org.apache.kafka:kafka-clients:2.4.0'){
+        exclude group: 'org.slf4j'
+    }
+    compileOnly 'io.camunda:zeebe-exporter-api:8.1.1'
+    compileOnly 'io.camunda:zeebe-elasticsearch-exporter:8.1.1'
     compileOnly 'org.json:json:20190722'
 }
 
 group = 'org.mifos.phee'
-version = '1.1.0-SNAPSHOT'
+version = '1.1.1-SNAPSHOT'
 description = 'exporter'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_17
 
 publishing {
     publications {
