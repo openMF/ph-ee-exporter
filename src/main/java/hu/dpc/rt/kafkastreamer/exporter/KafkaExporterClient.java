@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-
 public class KafkaExporterClient {
     private final Logger logger;
     private final KafkaExporterConfiguration configuration;
@@ -28,15 +27,19 @@ public class KafkaExporterClient {
 
     // json content for now
     private KafkaProducer<String, String> producer;
-    public static final String kafkaTopic = "zeebe-export";
+    public String kafkaTopic="zeebe-export-test";
+
+    public String kafkaBroker="kafkanew:9092";
 
     public KafkaExporterClient(final KafkaExporterConfiguration configuration, final Logger logger) {
         this.configuration = configuration;
         this.logger = logger;
+        logger.info("Kafka Broker:{}",kafkaBroker);
+        logger.info("Kafka Topic:{}",kafkaTopic);
 
         Map<String, Object> kafkaProperties = new HashMap<>();
         String clientId = buildKafkaClientId(logger);
-        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka:9092");
+        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker);
         kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());

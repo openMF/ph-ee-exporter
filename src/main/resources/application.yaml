@@ -1,0 +1,6 @@
+kafka:
+  brokers: "kafkanew:9092"
+
+exporter:
+  kafka:
+    topic: "zeebe-export-test"
