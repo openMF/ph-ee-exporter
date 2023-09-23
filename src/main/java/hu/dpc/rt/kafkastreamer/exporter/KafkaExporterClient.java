@@ -16,8 +16,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+
 public class KafkaExporterClient {
     private final Logger logger;
     private final KafkaExporterConfiguration configuration;
@@ -27,15 +29,25 @@ public class KafkaExporterClient {
 
     // json content for now
     private KafkaProducer<String, String> producer;
-    public String kafkaTopic="zeebe-export-test";
+    public String kafkaTopic = "";
 
-    public String kafkaBroker="kafkanew:9092";
+    public String kafkaBroker = "";
 
     public KafkaExporterClient(final KafkaExporterConfiguration configuration, final Logger logger) {
         this.configuration = configuration;
         this.logger = logger;
-        logger.info("Kafka Broker:{}",kafkaBroker);
-        logger.info("Kafka Topic:{}",kafkaTopic);
+        try {
+            Properties config = YamlParser.parse("resources/application.yaml");
+
+            // Access values from the configuration
+            kafkaBroker = (String) config.get("kafka.brokers");
+            kafkaTopic = (String) config.get("exporter.kafka.topic");
+
+            logger.info("Kafka Brokers: {}", kafkaBroker);
+            logger.info("Kafka Exporter Topic: {}", kafkaTopic);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Map<String, Object> kafkaProperties = new HashMap<>();
         String clientId = buildKafkaClientId(logger);
