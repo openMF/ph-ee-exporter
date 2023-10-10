@@ -24,7 +24,7 @@ public class KafkaExporterClient {
     private boolean initialized;
 
     private KafkaProducer<String, String> producer;
-    private KafkaExporterConfiguration configuration = new KafkaExporterConfiguration();
+    private static KafkaExporterConfiguration configuration = new KafkaExporterConfiguration();
 
     public KafkaExporterClient(KafkaExporterConfiguration configuration, Logger logger) {
         this.logger = logger;

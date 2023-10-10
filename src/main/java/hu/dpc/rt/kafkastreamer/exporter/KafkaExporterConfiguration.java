@@ -20,6 +20,14 @@ public class KafkaExporterConfiguration {
         logger.info("DPC Kafka exporter configuration:\nKafka bootstrap URL: {}", kafkaUrl);
     }
 
+    @Override
+    public String toString() {
+        return "KafkaExporterConfiguration{" +
+                "kafkaUrl='" + kafkaUrl + '\'' +
+                ", kafkaTopic='" + kafkaTopic + '\'' +
+                '}';
+    }
+
     public boolean shouldIndexRecord(final Record<?> record) {
         return shouldIndexRecordType(record.getRecordType()) && shouldIndexValueType(record.getValueType());
     }
