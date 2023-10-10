@@ -10,7 +10,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
-import software.amazon.msk.auth.iam.IAMLoginModule;
 
 import java.util.Arrays;
 import java.util.HashMap;

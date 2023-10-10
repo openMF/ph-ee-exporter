@@ -83,6 +83,6 @@ public class KafkaExporterConfiguration {
     }
 
     public boolean isMskEnabled() {
-        return "true".equalsIgnoreCase(System.getenv("KAFKA_MSK_ENABLED"));
+        return "true".equalsIgnoreCase(System.getenv("ZEEBE_MSK_ENABLED"));
     }
 }
