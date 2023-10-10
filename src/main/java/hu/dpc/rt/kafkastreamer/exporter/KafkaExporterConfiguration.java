@@ -24,44 +24,50 @@ public class KafkaExporterConfiguration {
         return shouldIndexRecordType(record.getRecordType()) && shouldIndexValueType(record.getValueType());
     }
 
-    public boolean shouldIndexValueType(final ValueType valueType) {
-        switch (valueType) {
-            case DEPLOYMENT:
-                return true;
-            case ERROR:
-                return true;
-            case INCIDENT:
-                return true;
-            case JOB:
-                return true;
-            case JOB_BATCH:
-                return false;
-            case MESSAGE:
-                return false;
-            case MESSAGE_SUBSCRIPTION:
-                return false;
-            case VARIABLE:
-                return true;
-            case VARIABLE_DOCUMENT:
-                return true;
-            case PROCESS_INSTANCE:
-                return true;
-            default:
-                return false;
-        }
+    public boolean shouldIndexRecordType(final RecordType recordType) {
+        return switch (recordType) {
+            case COMMAND -> false;
+            case COMMAND_REJECTION -> false;
+            case EVENT -> true;
+            case NULL_VAL -> false;
+            case SBE_UNKNOWN -> false;
+        };
     }
 
-    public boolean shouldIndexRecordType(final RecordType recordType) {
-        switch (recordType) {
-            case EVENT:
-                return true;
-            case COMMAND:
-                return false;
-            case COMMAND_REJECTION:
-                return false;
-            default:
-                return false;
-        }
+    public boolean shouldIndexValueType(final ValueType valueType) {
+        return switch (valueType) {
+            case CHECKPOINT -> false;
+            case COMMAND_DISTRIBUTION -> false;
+            case DECISION -> false;
+            case DECISION_EVALUATION -> false;
+            case DECISION_REQUIREMENTS -> false;
+            case DEPLOYMENT -> true;
+            case DEPLOYMENT_DISTRIBUTION -> false;
+            case ERROR -> true;
+            case ESCALATION -> false;
+            case INCIDENT -> true;
+            case JOB -> true;
+            case JOB_BATCH -> false;
+            case MESSAGE -> false;
+            case MESSAGE_START_EVENT_SUBSCRIPTION -> false;
+            case MESSAGE_SUBSCRIPTION -> false;
+            case NULL_VAL -> false;
+            case PROCESS -> false;
+            case PROCESS_EVENT -> false;
+            case PROCESS_INSTANCE -> true;
+            case PROCESS_INSTANCE_BATCH -> false;
+            case PROCESS_INSTANCE_CREATION -> false;
+            case PROCESS_INSTANCE_MODIFICATION -> false;
+            case PROCESS_INSTANCE_RESULT -> false;
+            case PROCESS_MESSAGE_SUBSCRIPTION -> false;
+            case RESOURCE_DELETION -> false;
+            case SBE_UNKNOWN -> false;
+            case SIGNAL -> false;
+            case SIGNAL_SUBSCRIPTION -> false;
+            case TIMER -> false;
+            case VARIABLE -> true;
+            case VARIABLE_DOCUMENT -> true;
+        };
     }
 
     public static class BulkConfiguration {
@@ -74,5 +80,9 @@ public class KafkaExporterConfiguration {
         public String toString() {
             return "BulkConfiguration{" + "delay=" + delay + ", size=" + size + '}';
         }
+    }
+
+    public boolean isMskEnabled() {
+        return "true".equalsIgnoreCase(System.getenv("KAFKA_MSK_ENABLED"));
     }
 }

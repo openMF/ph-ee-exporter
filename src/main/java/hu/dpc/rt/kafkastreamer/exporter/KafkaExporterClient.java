@@ -1,13 +1,16 @@
 package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.camunda.zeebe.protocol.record.Record;
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
+import software.amazon.msk.auth.iam.IAMLoginModule;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,17 +29,28 @@ public class KafkaExporterClient {
 
     public KafkaExporterClient(KafkaExporterConfiguration configuration, Logger logger) {
         this.logger = logger;
-        Map<String, Object> kafkaProperties = new HashMap<>();
-
         String clientId = buildKafkaClientId(logger);
-        kafkaProperties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.kafkaUrl);
-        kafkaProperties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
-        kafkaProperties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        kafkaProperties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        this.producer = new KafkaProducer<>(kafkaProperties);
+
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.kafkaUrl);
+        properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        if (configuration.isMskEnabled()) {
+            logger.info("configuring Kafka client with AWS MSK support");
+            properties.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, "SASL_SSL");
+            properties.put(SaslConfigs.SASL_MECHANISM, "AWS_MSK_IAM");
+            properties.put(SaslConfigs.SASL_JAAS_CONFIG, "software.amazon.msk.auth.iam.IAMLoginModule required;");
+            properties.put(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS, "software.amazon.msk.auth.iam.IAMClientCallbackHandler");
+        } else {
+            logger.info("configuring Kafka client for plain Kafka without MSK support)");
+        }
+
+        this.producer = new KafkaProducer<>(properties);
 
         try {
-            AdminClient adminClient = AdminClient.create(kafkaProperties);
+            AdminClient adminClient = AdminClient.create(properties);
             adminClient.createTopics(Arrays.asList(new NewTopic(configuration.kafkaTopic, 1, (short) 1)));
             adminClient.close();
             logger.info("created kafka topic {} successfully", configuration.kafkaTopic);

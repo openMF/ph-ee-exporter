@@ -11,9 +11,7 @@ import java.time.Duration;
 public class KafkaExporter implements Exporter {
     private Logger logger;
     private Controller controller;
-
     private KafkaExporterConfiguration configuration;
-
     private KafkaExporterClient client;
 
     private long lastPosition = -1;
