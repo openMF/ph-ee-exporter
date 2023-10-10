@@ -35,6 +35,7 @@ public class KafkaExporterClient {
         properties.put(ProducerConfig.CLIENT_ID_CONFIG, clientId);
         properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.RETRIES_CONFIG, 3);
 
         if (configuration.isMskEnabled()) {
             logger.info("configuring Kafka client with AWS MSK support");
@@ -104,5 +105,5 @@ public class KafkaExporterClient {
     public boolean shouldFlush() {
         return sentToKafka.get() >= configuration.bulk.size;
     }
-    
+
 }
