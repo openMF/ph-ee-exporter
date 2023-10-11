@@ -56,12 +56,12 @@ public class KafkaExporterConfiguration {
             case INCIDENT -> true;
             case JOB -> true;
             case JOB_BATCH -> false;
-            case MESSAGE -> false;
+            case MESSAGE -> true;
             case MESSAGE_START_EVENT_SUBSCRIPTION -> false;
             case MESSAGE_SUBSCRIPTION -> false;
             case NULL_VAL -> false;
             case PROCESS -> false;
-            case PROCESS_EVENT -> false;
+            case PROCESS_EVENT -> true;
             case PROCESS_INSTANCE -> true;
             case PROCESS_INSTANCE_BATCH -> false;
             case PROCESS_INSTANCE_CREATION -> false;
@@ -72,7 +72,7 @@ public class KafkaExporterConfiguration {
             case SBE_UNKNOWN -> false;
             case SIGNAL -> false;
             case SIGNAL_SUBSCRIPTION -> false;
-            case TIMER -> false;
+            case TIMER -> true;
             case VARIABLE -> true;
             case VARIABLE_DOCUMENT -> true;
         };
