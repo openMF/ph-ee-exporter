@@ -19,7 +19,7 @@
         <zeebe.version>8.1.1</zeebe.version>
         <kafka.version>2.4.0</kafka.version>
         <elasticsearch.version>7.6.0</elasticsearch.version>
-        <json.version>20190722</json.version>
+        <json.version>20231013</json.version>
     </properties>
 
     <dependencies>
