@@ -19,7 +19,7 @@ public class KafkaExporterConfiguration {
     public KafkaExporterConfiguration() {
         kafkaUrl = System.getenv("ZEEBE_KAFKAEXPORT_URL");
         kafkaTopic = System.getenv("ZEEBE_KAFKAEXPORT_TOPIC");
-        if (ObjectUtils.isEmpty(kafkaUrl)) {
+        if (ObjectUtils.isEmpty(kafkaTopic)) {
             kafkaTopic = "zeebe-export";
         }
         logger.info("DPC Kafka exporter configuration: {}", this);
