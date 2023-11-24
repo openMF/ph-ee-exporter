@@ -5,24 +5,29 @@ import io.camunda.zeebe.protocol.record.RecordType;
 import io.camunda.zeebe.protocol.record.ValueType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
 public class KafkaExporterConfiguration {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public String kafkaUrl;
-    public String kafkaTopic = "zeebe-export";
+    public String kafkaTopic;
 
     public BulkConfiguration bulk = new BulkConfiguration();
 
 
     public KafkaExporterConfiguration() {
         kafkaUrl = System.getenv("ZEEBE_KAFKAEXPORT_URL");
-        logger.info("DPC Kafka exporter configuration:\nKafka bootstrap URL: {}", kafkaUrl);
+        kafkaTopic = System.getenv("ZEEBE_KAFKAEXPORT_TOPIC");
+        if (ObjectUtils.isEmpty(kafkaUrl)) {
+            kafkaTopic = "zeebe-export";
+        }
+        logger.info("DPC Kafka exporter configuration: {}", this);
     }
 
     @Override
     public String toString() {
-        return "KafkaExporterConfiguration{" +
+        return "KafkaExporterConfiguration {" +
                 "kafkaUrl='" + kafkaUrl + '\'' +
                 ", kafkaTopic='" + kafkaTopic + '\'' +
                 '}';
