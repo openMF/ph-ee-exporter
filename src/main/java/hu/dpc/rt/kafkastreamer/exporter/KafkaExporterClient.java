@@ -11,10 +11,7 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaExporterClient {
@@ -51,9 +48,9 @@ public class KafkaExporterClient {
 
         try {
             AdminClient adminClient = AdminClient.create(properties);
-            adminClient.createTopics(Arrays.asList(new NewTopic(configuration.kafkaTopic, 1, (short) 1)));
+            adminClient.createTopics(Arrays.asList(new NewTopic(configuration.kafkaTopic, Optional.ofNullable(configuration.kafkaTopicPartitions), Optional.ofNullable(configuration.kafkaTopicReplicationFactor).map(Integer::shortValue))));
             adminClient.close();
-            logger.info("created kafka topic {} successfully", configuration.kafkaTopic);
+            logger.info("created kafka topic {} with partitions {} and replication factor {} successfully", configuration.kafkaTopic, configuration.kafkaTopicPartitions, configuration.kafkaTopicReplicationFactor);
         } catch (Exception e) {
             logger.warn("Failed to create Kafka topic (it exists already?)", e);
         }
