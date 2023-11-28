@@ -35,7 +35,7 @@ public class KafkaExporterConfiguration {
         try {
             return Integer.parseInt(System.getenv(key));
         } catch (Exception e) {
-            logger.warn("Failed to parse env var {} with value {} as int", key, System.getenv(key));
+            logger.warn("Failed to parse env var '{}' with value '{}' as int", key, System.getenv(key));
             return null;
         }
     }
