@@ -12,8 +12,6 @@ public class KafkaExporterConfiguration {
 
     public String kafkaUrl;
     public String kafkaTopic;
-    public Integer kafkaTopicPartitions;
-    public Short kafkaTopicReplicationFactor;
 
     public BulkConfiguration bulk = new BulkConfiguration();
 
@@ -24,26 +22,6 @@ public class KafkaExporterConfiguration {
         if (ObjectUtils.isEmpty(kafkaTopic)) {
             kafkaTopic = "zeebe-export";
         }
-
-        String kafkaTopicPartitionsString = System.getenv("ZEEBE_KAFKAEXPORT_TOPIC_PARTITIONS");
-        try {
-            kafkaTopicPartitions = Integer.valueOf(kafkaTopicPartitionsString);
-        } catch (NumberFormatException e) {
-            logger.warn("The value of ZEEBE_KAFKAEXPORT_TOPIC_PARTITIONS ({}) can't be converted to a java int", kafkaTopicPartitionsString);
-        }
-        if (ObjectUtils.isEmpty(kafkaTopicPartitions)) {
-            kafkaTopicPartitions = 1;
-        }
-
-        String kafkaTopicReplicationFactorString = System.getenv("ZEEBE_KAFKAEXPORT_TOPIC_REPLICATION_FACTOR");
-        try {
-            kafkaTopicReplicationFactor = Short.valueOf(kafkaTopicReplicationFactorString);
-        } catch (NumberFormatException e) {
-            logger.warn("The value of ZEEBE_KAFKAEXPORT_TOPIC_REPLICATION_FACTOR ({}) can't be converted to a java short", kafkaTopicReplicationFactorString);
-        }
-        if (ObjectUtils.isEmpty(kafkaTopicReplicationFactor)) {
-            kafkaTopicReplicationFactor = 3;
-        }
         logger.info("DPC Kafka exporter configuration: {}", this);
     }
 
@@ -52,8 +30,6 @@ public class KafkaExporterConfiguration {
         return "KafkaExporterConfiguration {" +
                 "kafkaUrl='" + kafkaUrl + '\'' +
                 ", kafkaTopic='" + kafkaTopic + '\'' +
-                ", kafkaTopicPartitions='" + kafkaTopicPartitions + '\'' +
-                ", kafkaTopicReplicationFactor='" + kafkaTopicReplicationFactor + '\'' +
                 '}';
     }
 
