@@ -7,11 +7,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Optional;
+
 public class KafkaExporterConfiguration {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public String kafkaUrl;
     public String kafkaTopic;
+    public Integer kafkaTopicPartitions;
+    public Integer kafkaTopicReplicationFactor;
 
     public BulkConfiguration bulk = new BulkConfiguration();
 
@@ -22,7 +26,18 @@ public class KafkaExporterConfiguration {
         if (ObjectUtils.isEmpty(kafkaTopic)) {
             kafkaTopic = "zeebe-export";
         }
-        logger.info("DPC Kafka exporter configuration: {}", this);
+        kafkaTopicPartitions = parseEnvInt("ZEEBE_KAFKAEXPORT_TOPIC_PARTITIONS");
+        kafkaTopicReplicationFactor = parseEnvInt("ZEEBE_KAFKAEXPORT_TOPIC_REPLICATION_FACTOR");
+        logger.info("Kafka exporter configuration: {}", this);
+    }
+
+    private Integer parseEnvInt(String key) {
+        try {
+            return Integer.parseInt(System.getenv(key));
+        } catch (Exception e) {
+            logger.warn("Failed to parse env var '{}' with value '{}' as int", key, System.getenv(key));
+            return null;
+        }
     }
 
     @Override
@@ -30,6 +45,8 @@ public class KafkaExporterConfiguration {
         return "KafkaExporterConfiguration {" +
                 "kafkaUrl='" + kafkaUrl + '\'' +
                 ", kafkaTopic='" + kafkaTopic + '\'' +
+                ", kafkaTopicPartitions='" + kafkaTopicPartitions + '\'' +
+                ", kafkaTopicReplicationFactor='" + kafkaTopicReplicationFactor + '\'' +
                 '}';
     }
 
