@@ -4,20 +4,20 @@ import io.camunda.zeebe.protocol.record.Record;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class KafkaExporterClient {
     private Logger logger;
     private KafkaExporterMetrics metrics;
     private AtomicLong sentToKafka = new AtomicLong(0);
+    private AtomicBoolean kafkaSendingError  = new AtomicBoolean(false);
     private boolean initialized;
 
     private KafkaProducer<String, String> producer;
@@ -81,7 +81,12 @@ public class KafkaExporterClient {
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
             String key = Long.toString(record.getKey());
-            producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
+            producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()), (recordMetadata, e) -> {
+                if (e != null) {
+                    logger.warn("sending record to kafka failed: {}", record);
+                    kafkaSendingError.set(true);
+                }
+            });
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
@@ -96,7 +101,15 @@ public class KafkaExporterClient {
             logger.info("flushed {} exported records to Kafka", sentToKafka.get());
             sentToKafka.set(0);
         }
-        return true;
+        if (kafkaSendingError.get()) {
+            logger.warn("flushing revealed an error, not acknowledging any records in the batch");
+            kafkaSendingError.set(false);
+            return false;
+        } else {
+            logger.trace("flushing succeeded, acknowledging the last record");
+            kafkaSendingError.set(false);
+            return true;
+        }
     }
 
     public boolean shouldFlush() {
