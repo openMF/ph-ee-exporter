@@ -1,4 +1,4 @@
-FROM camunda/zeebe:8.2.13
+FROM camunda/zeebe:8.4.0
 RUN apt update; apt install -y iputils-ping vim telnet less; apt clean
 ENV ZEEBE_BROKER_EXPORTERS_KAFKA_JARPATH exporters/phee-exporter.jar
 ENV ZEEBE_BROKER_EXPORTERS_KAFKA_CLASSNAME hu.dpc.rt.kafkastreamer.exporter.KafkaExporter
