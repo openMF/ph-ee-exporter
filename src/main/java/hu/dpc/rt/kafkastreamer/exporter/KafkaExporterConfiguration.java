@@ -68,9 +68,6 @@ public class KafkaExporterConfiguration {
         return switch (valueType) {
             case MESSAGE_BATCH -> false;
             case FORM -> false;
-            case USER_TASK -> false;
-            case PROCESS_INSTANCE_MIGRATION -> false;
-            case COMPENSATION_SUBSCRIPTION -> false;
             case CHECKPOINT -> false;
             case COMMAND_DISTRIBUTION -> false;
             case DECISION -> false;
