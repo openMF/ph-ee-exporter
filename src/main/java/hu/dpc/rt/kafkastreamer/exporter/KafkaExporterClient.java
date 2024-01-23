@@ -101,13 +101,11 @@ public class KafkaExporterClient {
             logger.info("flushed {} exported records to Kafka", sentToKafka.get());
             sentToKafka.set(0);
         }
-        if (kafkaSendingError.get()) {
+        if (kafkaSendingError.getAndSet(false)) {
             logger.warn("flushing revealed an error, not acknowledging any records in the batch");
-            kafkaSendingError.set(false);
             return false;
         } else {
             logger.trace("flushing succeeded, acknowledging the last record");
-            kafkaSendingError.set(false);
             return true;
         }
     }
