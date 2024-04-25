@@ -81,6 +81,7 @@ public class KafkaExporterClient {
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
             String key = Long.toString(record.getKey());
+            logger.info("## sending record to kafka with key {} ({}): {}", key, record.getValue().getClass().getName(), record.toJson());  // temporarily
             producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
