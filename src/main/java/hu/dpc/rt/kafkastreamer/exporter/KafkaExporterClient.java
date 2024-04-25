@@ -83,19 +83,17 @@ public class KafkaExporterClient {
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
             String key = Long.toString(record.getKey());
-            Long processInstanceKey = record.getKey(); // default
+            Long processInstanceKey = null;
             RecordValue value = record.getValue();
             try {
-                Method method = value.getClass().getMethod("getProcessInstanceKey", new Class[0]);
-                if (method != null) {
-                    processInstanceKey = (Long) method.invoke(value, new Object[0]);
-                }
+                Method method = value.getClass().getMethod("getProcessInstanceKey");
+                processInstanceKey = (Long) method.invoke(value, new Object[0]);
             } catch (Exception e) {
-                logger.error("Failed to get process instance key from record of type {}", value.getClass().getName());
+                logger.error("Failed to get process instance key from record of type {}, proceeding with record key", value.getClass().getName());
             }
 
-            logger.info("## sending record to kafka with key {} ({}): {}", processInstanceKey, value.getClass().getName(), record.toJson());  // temporarily
-            producer.send(new ProducerRecord<>(configuration.kafkaTopic, Long.toString(processInstanceKey), record.toJson()));
+            key = processInstanceKey != null ? Long.toString(processInstanceKey) : key;
+            producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
