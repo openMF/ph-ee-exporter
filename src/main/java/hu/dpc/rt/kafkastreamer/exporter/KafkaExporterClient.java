@@ -1,6 +1,7 @@
 package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.camunda.zeebe.protocol.record.Record;
+import io.camunda.zeebe.protocol.record.RecordValue;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -11,6 +12,7 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -81,8 +83,19 @@ public class KafkaExporterClient {
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
             String key = Long.toString(record.getKey());
-            logger.info("## sending record to kafka with key {} ({}): {}", key, record.getValue().getClass().getName(), record.toJson());  // temporarily
-            producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
+            Long processInstanceKey = record.getKey(); // default
+            RecordValue value = record.getValue();
+            try {
+                Method method = value.getClass().getMethod("getProcessInstanceKey", new Class[0]);
+                if (method != null) {
+                    processInstanceKey = (Long) method.invoke(value, new Object[0]);
+                }
+            } catch (Exception e) {
+                logger.error("Failed to get process instance key from record of type {}", value.getClass().getName());
+            }
+
+            logger.info("## sending record to kafka with key {} ({}): {}", processInstanceKey, value.getClass().getName(), record.toJson());  // temporarily
+            producer.send(new ProducerRecord<>(configuration.kafkaTopic, Long.toString(processInstanceKey), record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
