@@ -2,6 +2,7 @@ package hu.dpc.rt.kafkastreamer.exporter;
 
 import io.camunda.zeebe.protocol.record.Record;
 import io.camunda.zeebe.protocol.record.RecordValue;
+import io.camunda.zeebe.protocol.record.value.MessageRecordValue;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -82,21 +83,31 @@ public class KafkaExporterClient {
             logger.trace("sending record to kafka: {}", record.toJson());
             sentToKafka.incrementAndGet();
             metrics.recordBulkSize(1);
-            String key = Long.toString(record.getKey());
-            Long processInstanceKey = null;
-            RecordValue value = record.getValue();
-            try {
-                Method method = value.getClass().getMethod("getProcessInstanceKey");
-                processInstanceKey = (Long) method.invoke(value, new Object[0]);
-            } catch (Exception e) {
-                logger.error("Failed to get process instance key from record of type {}, proceeding with record key", value.getClass().getName());
-            }
 
-            key = processInstanceKey != null ? Long.toString(processInstanceKey) : key;
+            String key = extractKafkaKey(record);
             producer.send(new ProducerRecord<>(configuration.kafkaTopic, key, record.toJson()));
         } else {
             logger.trace("skipping record: {}", record.toString());
         }
+    }
+
+    private String extractKafkaKey(Record<?> record) {
+        String defaultKey = Long.toString(record.getKey());
+
+        if (record.getValue() instanceof MessageRecordValue) {
+            return defaultKey;
+        }
+
+        Long processInstanceKey = null;
+        RecordValue value = record.getValue();
+        try {
+            Method method = value.getClass().getMethod("getProcessInstanceKey");
+            processInstanceKey = (Long) method.invoke(value, new Object[0]);
+        } catch (Exception e) {
+            logger.warn("Failed to get process instance key from record of type {}, proceeding with record key", value.getClass().getName());
+        }
+
+        return processInstanceKey != null ? Long.toString(processInstanceKey) : defaultKey;
     }
 
     /**
